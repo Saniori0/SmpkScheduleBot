@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  redis:
+    image: redis:latest
+    container_name: smpkbot_redis
+    command:
+      /bin/sh
+      -c
+      redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD toor}"
+    ports:
+      - 6379:6379
+    environment:
+      REDIS_PASSWORD: toor
+    networks:
+      - main
+  python:
+    build: ./
+    container_name: smpkbot_python
+    environment:
+      REDIS_HOST: 0.0.0.0
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: toor
+      TELEGRAM_BOT_TOKEN: 7025053345:AAGmTwMUzPslrCyI2b6eFklnQ14oIrhIwFM
+    networks:
+      - main
+    depends_on:
+      - redis
+
+
+networks:
+  main:
+    driver: bridge
